@@ -21,7 +21,7 @@ Motor motor_init(int en, int ph, int enc1, int enc2, void(*enc_int)(), double k_
   attachInterrupt(digitalPinToInterrupt(m.enc1), enc_int, CHANGE);
   attachInterrupt(digitalPinToInterrupt(m.enc2), enc_int, CHANGE);
 
-  m.anglePID = new motorPID((double*)&m.encCountTarget, (double*)&m.encCount, &m.pwm, OUTPUT_MIN, OUTPUT_MAX, k_p, k_i, k_d);
+  m.anglePID = new motorPID(OUTPUT_MIN, OUTPUT_MAX, k_p, k_i, k_d);
 
   return m;
 }
@@ -44,6 +44,7 @@ void driveMotor(Motor* m) {
 
 void setAngleTarget(Motor *m, int targetAngle) {
   m->encCountTarget = (targetAngle) * COUNTS_PER_REV / DEG_PER_REV;
+
 }
 
 void calcPID(Motor *m) {
@@ -51,12 +52,17 @@ void calcPID(Motor *m) {
   unsigned long dt = millis() - lastMilli;
   if (dt > 50) {
     long currentEncoderCount = m->encCount;
-    m->anglePID->compute();
-    Serial.print(m->encCount);
-    Serial.print(" , ");
-    Serial.print(m->encCountTarget);
-    Serial.print(" , ");
-    Serial.println(m->pwm);
+    m->pwm = m->anglePID->compute(m->encCountTarget, m->encCount);
+    if (m->pwm > 0) m->dir = CCW;
+    else if (m->pwm < 0) m->dir = CW;
+    else m->dir = OFF;
+
+    Serial.print("SetPoint: "); Serial.print(m->encCountTarget);
+    Serial.print(", ");
+    Serial.print("PWM: ");Serial.print(m->pwm);
+    Serial.print(", ");
+    Serial.print("Current Count: ");Serial.println(m->encCount);
+    
     lastMilli = millis();
-  }
+  }  
 }

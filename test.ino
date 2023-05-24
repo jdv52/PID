@@ -7,11 +7,13 @@
 
 #define K_P   1
 #define K_I   0
-#define K_D   0
+#define K_D   0.1
 
 volatile int pos1 = 0;
 
 volatile int lastEncoded;
+
+long lastMillis = 0;
 
 Motor m1;
 
@@ -43,11 +45,16 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   m1 = motor_init(EN1, PH1, ENCA1, ENCB1, readEnc1, K_P, K_I, K_D);
-  setAngleTarget(&m1, 180);
+  setAngleTarget(&m1, 60);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   calcPID(&m1);
   driveMotor(&m1);
+  if (millis() - lastMillis > 5000)  {
+    long currentTime = millis();
+    m1.encCountTarget += 60;
+    lastMillis = currentTime;
+  }
 }
