@@ -63,8 +63,6 @@ int motorPID::compute(int _setPoint, int _measuredFeedback){
     if(_pwmOutput > _outputMax) _pwmOutput = _outputMax;
     else if(_pwmOutput < _outputMin) _pwmOutput = _outputMin;
     _lastMilli = millis();
-
-    Serial.println(_pwmOutput);
   }
 
   return _pwmOutput;
