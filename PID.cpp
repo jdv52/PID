@@ -28,7 +28,7 @@ int motorPID::compute(int _setPoint, int _measuredFeedback){
   
   unsigned long _dT = millis()- _lastMilli;
   if( _dT >= _samplingTime){
-    double _porportionalError = _setPoint - _measuredFeedback;
+    double _porportionalError = _measuredFeedback - _setPoint;
     //to prevent derivative kick
     double _derivativeError = (_prevMeasuredFeedback - _measuredFeedback);
     _prevMeasuredFeedback = _measuredFeedback;
