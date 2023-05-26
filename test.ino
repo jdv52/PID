@@ -1,9 +1,9 @@
 #include "Motor.h"
 
-#define EN1   19
-#define PH1   21
-#define ENCA1 17  // Yellow
-#define ENCB1 16  // White
+#define EN1   5
+#define PH1   4
+#define ENCA1 13 // Yellow
+#define ENCB1 11  // White
 
 #define EN2   22
 #define PH2   24
@@ -29,6 +29,10 @@ void readEnc1() {
 
   int currentEncoded = (phaseA << 1) | phaseB;
   int sum = (m1._lastEncCount << 2) | currentEncoded;
+
+  Serial.print(phaseA);
+  Serial.print(", ");
+  Serial.println(phaseB);
 
   switch(sum){
     case 0b0001:
@@ -74,23 +78,33 @@ void readEnc2() {
 
 void setup() {
   // put your setup code here, to run once:
+  // driveMotor(&m2);
+//  if (millis() - lastMillis > 5000)  {
+//    long currentTime = millis();
+//    m1.encCountTarget += 60;
+//    m2.encCountTarget += 60;
+//    lastMillis = currentTime;
+
+//    Serial.print("SetPoint: "); Serial.print(m1.encCountTarget);
+//    Serial.print(", ");
+//    Serial.print("PWM: ");Serial.print(m1.pwm);
+//    Serial.print(", ");
+//    Serial.print("Current Count: ");Serial.println(m1.encCount);
   Serial.begin(9600);
   m1 = motor_init(EN1, PH1, ENCA1, ENCB1, readEnc1, K_P, K_I, K_D);
   m2 = motor_init(EN2, PH2, ENCA2, ENCB2, readEnc2, K_P, K_I, K_D);
-  setAngleTarget(&m1, 60);
-  setAngleTarget(&m2, 60);
+//  setAngleTarget(&m1, 60);
+//  setAngleTarget(&m2, 60);
+  m1.pwm = 255;
+  m1.dir = CW;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  calcPID(&m1);
+  // calcPID(&m1);
+
+  // Serial.println(m1.encCount);
   driveMotor(&m1);
   // calcPID(&m2);
-  // driveMotor(&m2);
-  if (millis() - lastMillis > 5000)  {
-    long currentTime = millis();
-    m1.encCountTarget += 60;
-    m2.encCountTarget += 60;
-    lastMillis = currentTime;
-  }
+// }
 }

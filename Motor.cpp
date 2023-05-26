@@ -56,12 +56,6 @@ void calcPID(Motor *m) {
     if (m->pwm > 0) m->dir = CCW;
     else if (m->pwm < 0) m->dir = CW;
     else m->dir = OFF;
-
-    Serial.print("SetPoint: "); Serial.print(m->encCountTarget);
-    Serial.print(", ");
-    Serial.print("PWM: ");Serial.print(m->pwm);
-    Serial.print(", ");
-    Serial.print("Current Count: ");Serial.println(m->encCount);
     
     lastMilli = millis();
   }  
