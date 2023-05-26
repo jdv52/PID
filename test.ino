@@ -30,21 +30,27 @@ void readEnc1() {
   int currentEncoded = (phaseA << 1) | phaseB;
   int sum = (m1._lastEncCount << 2) | currentEncoded;
 
-  Serial.print(phaseA);
-  Serial.print(", ");
-  Serial.println(phaseB);
+  // Serial.print(phaseA);
+  // Serial.print(", ");
+  // Serial.print(phaseB);
+  // Serial.print(", ");
+  // Serial.println(m1.encCount);
 
   switch(sum){
     case 0b0001:
     case 0b0111:
     case 0b1110:
     case 0b1000:
+    case 0b0011:
+    case 0b1100:
       m1.encCount--;
       break;
     case 0b0010:
     case 0b1011:
     case 0b1101:
     case 0b0100:
+    case 0b1010:
+    case 0b0110:
       m1.encCount++;
       break;
   }
@@ -64,12 +70,14 @@ void readEnc2() {
     case 0b0111:
     case 0b1110:
     case 0b1000:
+
       m2.encCount--;
       break;
     case 0b0010:
     case 0b1011:
     case 0b1101:
     case 0b0100:
+
       m2.encCount++;
       break;
   }
@@ -79,32 +87,33 @@ void readEnc2() {
 void setup() {
   // put your setup code here, to run once:
   // driveMotor(&m2);
-//  if (millis() - lastMillis > 5000)  {
-//    long currentTime = millis();
-//    m1.encCountTarget += 60;
-//    m2.encCountTarget += 60;
-//    lastMillis = currentTime;
 
-//    Serial.print("SetPoint: "); Serial.print(m1.encCountTarget);
-//    Serial.print(", ");
-//    Serial.print("PWM: ");Serial.print(m1.pwm);
-//    Serial.print(", ");
-//    Serial.print("Current Count: ");Serial.println(m1.encCount);
   Serial.begin(9600);
   m1 = motor_init(EN1, PH1, ENCA1, ENCB1, readEnc1, K_P, K_I, K_D);
-  m2 = motor_init(EN2, PH2, ENCA2, ENCB2, readEnc2, K_P, K_I, K_D);
-//  setAngleTarget(&m1, 60);
-//  setAngleTarget(&m2, 60);
-  m1.pwm = 255;
-  m1.dir = CW;
+  // m2 = motor_init(EN2, PH2, ENCA2, ENCB2, readEnc2, K_P, K_I, K_D);
+  setAngleTarget(&m1, 60);
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  // calcPID(&m1);
+   calcPID(&m1);
+   if (millis() - lastMillis > 5000)  {
+    long currentTime = millis();
+    m1.encCountTarget += 60;
+    lastMillis = currentTime;
+   }
+
 
   // Serial.println(m1.encCount);
   driveMotor(&m1);
-  // calcPID(&m2);
+
+   Serial.print("SetPoint: "); Serial.print(m1.encCountTarget);
+   Serial.print(", ");
+   Serial.print("PWM: ");Serial.print(m1.pwm);
+   Serial.print(", ");
+   Serial.print("Current Count: ");Serial.println(m1.encCount);
+
+   //calcPID(&m2);
 // }
 }
