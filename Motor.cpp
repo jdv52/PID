@@ -28,11 +28,11 @@ Motor motor_init(int en, int ph, int enc1, int enc2, void(*enc_int)(), double k_
 
 void driveMotor(Motor* m) {
    switch (m->dir) {
-    case CW:
+    case CCW:
       digitalWrite(m->ph, HIGH);
       analogWrite(m->en, m->pwm);
       break;
-    case CCW:
+    case CW:
       digitalWrite(m->ph, LOW);
       analogWrite(m->en, m->pwm);
       break;
